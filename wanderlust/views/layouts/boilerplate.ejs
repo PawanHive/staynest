@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- This heading is FIXED. It will appear on EVERY page that uses this layout -->
+    <h1>Wanderlust</h1>
+    <div class="container"><%- body %></div>
+</body>
+</html>
+
+
+
+
+
+
+
+<!--  IMPORTANT LINE :
+ <%- body %> is a PLACEHOLDER provided by ejs-mate
+
+ Whatever HTML is written in the child EJS file
+ (like index.ejs, show.ejs, etc.)
+ will be injected RIGHT HERE
+
+ Example:
+    If index.ejs has:
+     <h2>All Trips</h2>
+
+ Then it will appear here inside this div
+-->
+
