@@ -1,32 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wanderlust</title>
-</head>
-<body>
-    <h3>Create a New Listing:</h3>
+<% layout("/layouts/boilerplate.ejs") %>
 
-<!-- <form method="POST" action="/listings">
-    <input type="text" placeholder="enter title" name="title"><br><br>
-    <textarea type="text" placeholder="enter description" name="description"></textarea><br><br>
-    <input type="text" placeholder="enter image URL/Link" name="image"><br><br>
-    <input type="number" placeholder="enter price" name="price"><br><br>
-    <input type="text" placeholder="enter location" name="location"><br><br>
-    <input type="text" placeholder="enter country" name="country"><br><br>
-    <button>Add</button>
-</form> -->
+  <div class="row mt-3">
+    <div class="col-8 offset-2">
+      <%# here means form will take only 8colums(col-8) outof 12 and shift 2 column from left (offset-2) %>
+        <h3>Create a New Listing:</h3>
+        <form method="POST" action="/listings">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" placeholder="Add a catchy title" name="listing[title]" id="title">
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea type="text" class="form-control" placeholder="enter description" name="listing[description]"
+              id="description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="text" class="form-control" placeholder="enter image URL/Link" name="listing[image]" id="image">
+          </div>
 
-<form method="POST" action="/listings">
-    <input type="text" placeholder="enter title" name="listing[title]"><br><br>     <%# listing[title] ⮕ Express will create: req.body.listing.title ... same for everybody %>
-    <textarea type="text" placeholder="enter description" name="listing[description]"></textarea><br><br>
-    <input type="text" placeholder="enter image URL/Link" name="listing[image]"><br><br>
-    <input type="number" placeholder="enter price" name="listing[price]"><br><br>
-    <input type="text" placeholder="enter location" name="listing[location]"><br><br>
-    <input type="text" placeholder="enter country" name="listing[country]"><br><br>
-    <button>Add</button>
-</form>
+          <div class="row">
+            <div class="mb-3 col-md-4">       <%# means after medium screen size this row will span to column 4 %>
+              <label for="price" class="form-label">Price</label>
+              <input type="number" class="form-control" placeholder="1200" name="listing[price]" id="price">
+            </div>
+            <div class="mb-3 col-md-8">       <%# means after medium screen size this row will span to column 8 %>
+              <label for="country" class="form-label">Country</label>
+              <input type="text" class="form-control" placeholder="India" name="listing[country]" id="country">
+            </div>
+          </div>
 
-</body>
-</html>
+          <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" placeholder="Jaipur, Rajasthan" name="listing[location]" id="location">
+          </div>
+
+          <button class="btn btn-dark add-button mb-3">Add</button>
+        </form>
+    </div>
+  </div>
