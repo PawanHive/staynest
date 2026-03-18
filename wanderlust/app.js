@@ -7,6 +7,11 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const {listingSchema} = require("./schema.js")
+
+// installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io 
+const cors = require('cors');                                                       // 1. Import it
+app.use(cors());                                                                    // 2. Enable it for all routes
 
 let port = 8080;
 
@@ -55,11 +60,11 @@ app.get("/listings/new", (req, res) => {
 app.post(
   "/listings",
   wrapAsync(async (req, res, next) => {
-    if (!req.body.listing) {
-      throw new ExpressError(400, "Send valid data for listing");
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if (result.error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+      throw new ExpressError(400, result.error);
     }
-    // let listing = req.body.listing;
-    // console.log(listing)
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
@@ -129,6 +134,19 @@ app.listen(port, () => {
 });
 
 // commented routes created by my first:
+
+// // Create Route
+// app.post(
+//   "/listings",
+//   wrapAsync(async (req, res, next) => {
+//     let result = listingSchema.validate(req.body);
+//     // let listing = req.body.listing;
+//     // console.log(listing)
+//     const newListing = new Listing(req.body.listing);
+//     await newListing.save();
+//     res.redirect("/listings");
+//   }),
+// );
 
 // Create Route (Add data to DB)
 // app.post('/listings', async (req, res) => {

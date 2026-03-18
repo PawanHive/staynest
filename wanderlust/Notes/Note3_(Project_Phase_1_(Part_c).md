@@ -287,3 +287,60 @@ let { statusCode = 500 } = err;
 - That error object becomes `err`  
 
 ---
+
+# #4: Used Custom ExpressError class and styled it in error.ejs view page:
+
+## 1. custom ExpressError Class:
+
+ExpressError.js
+```js
+// custom Express Error
+
+// The job of this ExpressError class is:
+//To create structured, custom errors that carry both a message AND an HTTP status code.
+
+class ExpressError extends Error {
+  constructor (statusCode, message) {
+    super();
+    this.statusCode = statusCode;
+    this.message = message;
+  }
+}
+
+module.exports = ExpressError;
+```
+---
+
+app.ejs
+```js
+//app.js
+const ExpressError = require("./utils/ExpressError.js");
+
+// handle unknown routes (runs when user requests a route that does not exist)
+app.use((req, res, next) => {
+  next(new ExpressError(404, "Page Not Found!"));                                               // next(err) MANUALLY passes a custom error to Express. Express skips all normal routes/middleware and forwards this error to the error-handling middleware, where it is received as 'err'.
+});
+
+// Error Handler Middleware
+// (Its Job: Catch any error in our app and send a proper response to the client. and server may never crash)
+app.use((err, req, res, next) => {
+  let { statusCode = 500, message = "something went wrong" } = err;                               // (deconstruct)extract info from Express 'err' object
+  res.status(statusCode).render("error.ejs", { message })
+  // res.status(statusCode).send(message);
+});
+```
+---
+
+error.ejs
+```html
+<% layout("/layouts/boilerplate.ejs") %> 
+<%# Using Bootstrap alert for show
+error in styled manner %>
+
+<div class="row mt-3">
+  <div class="alert alert-danger col-6 offset-3" role="alert">
+    <p><%= message %></p>
+  </div>
+</div>
+```
+Error basically styled here in good manner which feel appealing for client
