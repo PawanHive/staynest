@@ -29,7 +29,7 @@
           <hr>
           <h4>Leave a reviews:</h4>
 
-          <form action=""> 
+          <form action="/listings/<%=listing._id%>/reviews" method="POST"> 
             <div class="mb-3 mt-3">
               <label for="rating" class="form-label">Rating:</label>
               <input type="range" class="form-range" min="1" max="5" id="rating" name="review[rating]">

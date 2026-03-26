@@ -8,6 +8,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const {listingSchema} = require("./schema.js")
+const Review = require("./models/review.js");
 
 // installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io 
 const cors = require('cors');                                                       // 1. Import it
@@ -124,6 +125,17 @@ app.delete(
     res.redirect("/listings");
   }),
 );
+
+// REVIEWS - post route
+app.post("/listings/:id/reviews", async (req, res) => {
+  const { id } = req.params; 
+  const listing = await Listing.findById(id);              //  Find listing
+  const newReview = new Review(req.body.review);            //  Create review
+  listing.reviews.push(newReview);                         //  Link review to listing
+  await newReview.save();                                   //  Save review
+  await listing.save();                                     //  Save listing
+  res.redirect(`/listings/${id}`)
+})
 
 // handle unknown routes (runs when user requests a route that does not exist)
 app.use((req, res, next) => {
