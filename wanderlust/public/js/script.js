@@ -17,3 +17,10 @@
     }, false)
   })
 })()
+
+/*
+The above code logic is for class = "needs-validation" 
+which copied from Bootstrap website > from 'from validation' section link is below:
+
+Bootstrap Form Validation: https://getbootstrap.com/docs/5.3/forms/validation/
+*/

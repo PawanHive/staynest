@@ -7,12 +7,12 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema} = require("./schema.js")
-const Review = require("./models/review.js");
+const { listingSchema, reviewSchema } = require("./schema.js"); //server-side validation schema required
+const Review = require("./models/review.js"); // 'Review' model required
 
-// installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io 
-const cors = require('cors');                                                       // 1. Import it
-app.use(cors());                                                                    // 2. Enable it for all routes
+// installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io
+const cors = require("cors"); // 1. Import it
+app.use(cors()); // 2. Enable it for all routes
 
 let port = 8080;
 
@@ -42,20 +42,31 @@ app.get("/", (req, res) => {
   res.send("Hi, I am root");
 });
 
-// Defining new Middleware for Schema Validation (server-side)
+// Defining new Middleware for listingSchema Validation (server-side)
 // Middleware to validate request data against the listingSchema using Joi.
 // If validation fails, it throws an ExpressError with status 400 and details of the error.
 // Otherwise, it calls next() to continue to the next middleware or route handler.
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   // console.log(error);
-  if (error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+  if (error) {                                                      // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
     let errMsg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(400, errMsg);
   } else {
     next();
   }
-}
+};
+
+// Defining new Middleware for reviewSchema Validation (server-side)
+const validateReview = (req, res, next) => {
+  let { error } = reviewSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+};
 
 // Index Route
 app.get(
@@ -75,7 +86,7 @@ app.get("/listings/new", (req, res) => {
 // Create Route
 app.post(
   "/listings",
-  validateListing,                                        // middleware to check validation for schema
+  validateListing, // middleware to check validation for schema
   wrapAsync(async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
@@ -127,26 +138,30 @@ app.delete(
 );
 
 // REVIEWS - post route
-app.post("/listings/:id/reviews", async (req, res) => {
-  const { id } = req.params; 
-  const listing = await Listing.findById(id);              //  Find listing
-  const newReview = new Review(req.body.review);            //  Create review
-  listing.reviews.push(newReview);                         //  Link review to listing
-  await newReview.save();                                   //  Save review
-  await listing.save();                                     //  Save listing
-  res.redirect(`/listings/${id}`)
-})
+app.post(
+  "/listings/:id/reviews",
+  validateReview,
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const listing = await Listing.findById(id);                        //  Find listing
+    const newReview = new Review(req.body.review);                       //  Create review
+    listing.reviews.push(newReview);                                  //  Link review to listing
+    await newReview.save();                                           //  Save review
+    await listing.save();                                                 //  Save listing
+    res.redirect(`/listings/${id}`);
+  }),
+);
 
 // handle unknown routes (runs when user requests a route that does not exist)
 app.use((req, res, next) => {
-  next(new ExpressError(404, "Page Not Found!"));                                               // next(err) MANUALLY passes a custom error to Express. Express skips all normal routes/middleware and forwards this error to the error-handling middleware, where it is received as 'err'.
+  next(new ExpressError(404, "Page Not Found!")); // next(err) MANUALLY passes a custom error to Express. Express skips all normal routes/middleware and forwards this error to the error-handling middleware, where it is received as 'err'.
 });
 
 // Express Error Handler Middleware
 // (Its Job: Catch any error in our app and send a proper response to the client. and server may never crash)
 app.use((err, req, res, next) => {
-  let { statusCode = 500, message = "something went wrong" } = err;                               // (deconstruct)extract info from Express 'err' object
-  res.status(statusCode).render("error.ejs", { message })
+  let { statusCode = 500, message = "something went wrong" } = err; // (deconstruct)extract info from Express 'err' object
+  res.status(statusCode).render("error.ejs", { message });
   // res.status(statusCode).send(message);
 });
 
