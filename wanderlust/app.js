@@ -1,14 +1,13 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("./schema.js"); //server-side validation schema required
-const Review = require("./models/review.js"); // 'Review' model required
+
+const listingsRoute = require("./routes/listings.js") // require 'listings' all routes
+const reviewsRoute = require("./routes/reviews.js")   // require 'reviews' all routes
 
 // installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io
 const cors = require("cors"); // 1. Import it
@@ -42,128 +41,9 @@ app.get("/", (req, res) => {
   res.send("Hi, I am root");
 });
 
-// Defining new Middleware for listingSchema Validation (server-side)
-// Middleware to validate request data against the listingSchema using Joi.
-// If validation fails, it throws an ExpressError with status 400 and details of the error.
-// Otherwise, it calls next() to continue to the next middleware or route handler.
-const validateListing = (req, res, next) => {
-  let { error } = listingSchema.validate(req.body);
-  // console.log(error);
-  if (error) {
-    // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
-
-// Defining new Middleware for reviewSchema Validation (server-side)
-const validateReview = (req, res, next) => {
-  let { error } = reviewSchema.validate(req.body);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
-
-// Index Route
-app.get(
-  "/listings",
-  wrapAsync(async (req, res) => {
-    const AllListings = await Listing.find({});
-    // console.log(AllListings)
-    res.render("listings/index.ejs", { AllListings });
-  }),
-);
-
-// New Route
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new.ejs");
-});
-
-// Create Route
-app.post(
-  "/listings",
-  validateListing, // middleware to check validation for schema
-  wrapAsync(async (req, res, next) => {
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/listings");
-  }),
-);
-
-// Show Route
-app.get(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
-    // console.log(listing);
-    res.render("listings/show.ejs", { listing });
-  }),
-);
-
-// Edit Route
-app.get(
-  "/listings/:id/edit",
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const listing = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing });
-  }),
-);
-
-// Update Route
-app.put(
-  "/listings/:id",
-  validateListing,
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    res.redirect(`/listings/${id}`); // redirect to (Show Route)
-  }),
-);
-
-// Delete Route
-app.delete(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/listings");
-  }),
-);
-
-// REVIEWS - post route
-app.post(
-  "/listings/:id/reviews",
-  validateReview,
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const listing = await Listing.findById(id); //  Find listing
-    const newReview = new Review(req.body.review); //  Create review
-    listing.reviews.push(newReview); //  Link review to listing
-    await newReview.save(); //  Save review
-    await listing.save(); //  Save listing
-    res.redirect(`/listings/${id}`);
-  }),
-);
-
-// REVIEWS - delete route
-app.delete(
-  "/listings/:id/reviews/:reviewId",
-  wrapAsync(async (req, res) => {
-    let { id, reviewId } = req.params;
-    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }); // this line make sure: removes review ObjectId from 'reviews' array, means it should delete completely
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/listings/${id}`);
-  }),
-);
+// express Router Middleware 
+app.use("/listings", listingsRoute);   // for "listings" (below line is = whole code in ./routes/listings.js)
+app.use("/listings/:id/reviews", reviewsRoute);   // for "reviews" (below line is = whole code in ./routes/reviews.js)
 
 // handle unknown routes (runs when user requests a route that does not exist)
 app.use((req, res, next) => {
