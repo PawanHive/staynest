@@ -2,6 +2,7 @@
 
 # #1: `express-session` code-parts snippet explained
 
+### `express-session` setup
 ```js
 const session = require("express-session"); // Import session middleware
 
@@ -53,4 +54,28 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   next();
 });
+```
+# ----------------------------------------------------------------------------------------------------
+
+# #3: Includes `success` and `failure` flash message
+
+```ejs
+<%# "success" flash message %>
+
+<% if (success && success.length) { %>
+  <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
+  <%= success %> 
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+
+<%# "error"/failure flash message %>
+
+<% if (error && error.length) { %>
+  <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
+  <%= error %> 
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+
 ```
