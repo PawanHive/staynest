@@ -66,7 +66,7 @@ router.get(
       req.flash("error", "Listing you requested for does not exist"); // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4    to test it copy link of exiting listing and delete and find again then this message will appear
       return res.redirect("/listings");
     }
-    console.log(listing)
+    // console.log(listing)
     res.render("listings/show.ejs", { listing });
   }),
 );

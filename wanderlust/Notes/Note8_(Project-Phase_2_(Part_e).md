@@ -282,3 +282,47 @@ Converts:
   <i> <%= listing.owner.username %></i> 
 </p>
 ```
+
+# #7: Starting with Authorization
+
+**Feature we want:**  
+👉 Only the **owner of a listing** should:
+
+- See **Edit** button
+- See **Delete** button
+- Be able to edit/delete
+
+## 7.1 STEP 1: Hide buttons in EJS (UI level)
+
+📁 `show.ejs`
+
+```html
+        <% if (currUser && listing.owner._id.equals(currUser._id)) { %>    <%# check current user means logged-in user exists, if exists then match current(loggedin) user id to listing.owner Id, then only edit and delete btns will appear %>
+          <div class="row">
+            <div class="mt-3 col-2">
+              <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark edit-button">Edit</a>
+            </div>
+  
+            <div class="mt-3 col-2">
+              <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
+                <button class="btn btn-dark">Delete</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+```
+
+## 7.2  What this does?
+
+👉 Checks:
+
+~~~js
+currUser && listing.owner._id.equals(currUser._id)
+~~~
+
+### 💥 Meaning:
+
+- User is logged in ✅  
+- AND user is owner ✅  
+
+👉 Only then show buttons

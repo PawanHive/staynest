@@ -12,17 +12,20 @@
           <p class="card-text"> <%= listing.location %> </p>
           <p class="card-text"> <%= listing.country %> </p>
         </div>
-        <div class="row">
-          <div class="mt-3 col-2">
-            <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark edit-button">Edit</a>
-          </div>
 
-          <div class="mt-3 col-2">
-            <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
-              <button class="btn btn-dark">Delete</button>
-            </form>
+        <% if (currUser && listing.owner._id.equals(currUser._id)) { %>    <%# check current user means logged-in user exists, if exists then match current(loggedin) user id to listing.owner Id, then only edit and delete btns will appear %>
+          <div class="row">
+            <div class="mt-3 col-2">
+              <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark edit-button">Edit</a>
+            </div>
+  
+            <div class="mt-3 col-2">
+              <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
+                <button class="btn btn-dark">Delete</button>
+              </form>
+            </div>
           </div>
-        </div>
+        <% } %>
 
         <div>
           <hr>
