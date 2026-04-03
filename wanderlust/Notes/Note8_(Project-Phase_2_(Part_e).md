@@ -50,3 +50,50 @@ router.get("/new", isLoggedIn, (req, res) => {  // now `isLoggedIn` added as mid
 });
 ```
 Now we can add `isLoggedIn` middleware to multiple routes (where we want to authenticate is user logged-in or not).
+
+# #2: Logout User 
+using passport `req.logout()` methods.  
+`GET /logout`
+
+## What does `req.logout()` do?
+
+`req.logout()` is a Passport method that removes the user from the session, clears `req.user`, and makes the request unauthenticated.
+
+**Exmaple:** `../routes/users.js`
+```js
+// Logout GET route
+router.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err); // if passport is failed a middleware then only we get this error. other we usually don't get error during logout.
+    }
+    req.flash("success", "You are logged out!");
+    res.redirect("/listings");
+  });
+});
+```
+
+# #3: Add Styling
+to SignUp , Login and Logout.
+
+`../views/includes/navbar.js`
+```
+      <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
+        <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>
+          <a class="nav-link" href="/signup">Sign up</a>
+          <a class="nav-link" href="/login">Log in</a>
+        <% } %>
+        <% if (currUser) { %>
+          <a class="nav-link" href="/logout">Log out</a>
+        <% } %>
+      </div>
+```
+`app.js`
+```js
+// middleware (Global): (we can access it in all .ejs template), ('req.locals' should always declared above routes)
+app.use((req, res, next) => {
+  res.locals.currUser = req.user; // It copies 'req.user' into 'res.locals' so by using 'currUser', logged-in user is accessible in all templates (as we can't use 'req.user' in .ejs).
+  next();
+});
+```
+This **middleware** makes flash messages and the logged-in user available to all EJS templates using `res.locals`.

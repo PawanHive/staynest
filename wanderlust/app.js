@@ -60,7 +60,7 @@ app.get("/", (req, res) => {
 });
 
 app.use(session(sessionOptions)); // express-session middleware
-app.use(flash()); // connect-flash middleware
+app.use(flash()); // connect-flash middleware declared
 
 // passport/passport-local
 app.use(passport.initialize());
@@ -71,10 +71,11 @@ passport.use(new LocalStrategy(User.authenticate())); // use static authenticate
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// connect-flash custom-middleware (flash should always declared above routes)
+// middleware (Global): (we can access it in all .ejs template), ('req.locals' should always declared above routes)
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success"); // can pass 'success' message to all .ejs template
+  res.locals.error = req.flash("error"); // can pass 'error' message to all .ejs template
+  res.locals.currUser = req.user; // It copies 'req.user' into 'res.locals' so by using 'currUser', logged-in user is accessible in all templates (as we can't use 'req.user' in .ejs).
   next();
 });
 
