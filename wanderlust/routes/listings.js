@@ -6,8 +6,7 @@ const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js"); //server-side validation (Joi) schema required
 const Listing = require("../models/listing");
 
-const isLoggedIn = require("../middleware.js")
-
+const isLoggedIn = require("../middleware.js");
 
 // Defining new Middleware for listingSchema Validation (server-side)
 // Middleware to validate request data against the listingSchema using Joi.
@@ -16,7 +15,8 @@ const isLoggedIn = require("../middleware.js")
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   // console.log(error);
-  if (error) {        // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+  if (error) {
+    // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
     let errMsg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(400, errMsg);
   } else {
@@ -46,6 +46,7 @@ router.post(
   validateListing, // middleware to check validation for schema
   wrapAsync(async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id; // passport by default save user info in 'req.user'
     await newListing.save();
     req.flash("success", "New Listing Created!"); // this message will flash after creating new listing but to access this message we will use res.locals()
     res.redirect("/listings");
@@ -57,12 +58,15 @@ router.get(
   "/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id)
+      .populate("reviews")
+      .populate("owner");
     // console.log(listing);
     if (!listing) {
-      req.flash("error", "Listing you requested for does not exist");   // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4    to test it copy link of exiting listing and delete and find again then this message will appear
+      req.flash("error", "Listing you requested for does not exist"); // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4    to test it copy link of exiting listing and delete and find again then this message will appear
       return res.redirect("/listings");
     }
+    console.log(listing)
     res.render("listings/show.ejs", { listing });
   }),
 );
@@ -75,7 +79,7 @@ router.get(
     const { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
-      req.flash("error", "Listing you requested for edit does not exist");    // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4/edit 
+      req.flash("error", "Listing you requested for edit does not exist"); // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4/edit
       return res.redirect("/listings");
     }
     res.render("listings/edit.ejs", { listing });
@@ -109,8 +113,6 @@ router.delete(
 );
 
 module.exports = router;
-
-
 
 /*
 Note:

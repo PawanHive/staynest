@@ -56,6 +56,8 @@ router.get("/new", isLoggedIn, (req, res) => {  // now `isLoggedIn` added as mid
 ```
 Now we can add `isLoggedIn` middleware to multiple routes (where we want to authenticate is user logged-in or not).
 
+# --------------------------------------------------------------------------------------------------
+
 # #2: Logout User 
 using passport `req.logout()` methods.  
 `GET /logout`
@@ -79,6 +81,8 @@ router.get("/logout", (req, res, next) => {
   });
 });
 ```
+
+# --------------------------------------------------------------------------------------------------
 
 # #3: Add Styling
 to SignUp , Login and Logout.
@@ -104,6 +108,8 @@ app.use((req, res, next) => {
 });
 ```
 This **middleware** makes flash messages and the logged-in user available to all EJS templates using `res.locals`.
+
+# --------------------------------------------------------------------------------------------------
 
 # #4: Login after SignUp
 **Problem/Flaws:**   
@@ -145,6 +151,8 @@ router.post(
 we need to use `req.login()` just after registered/save user data to server, so that it can login immediately just after signup/register.
 
 `req.login()` is a Passport method that logs in a user by storing their data in the session and setting `req.user`, making them authenticated immediately.
+
+# --------------------------------------------------------------------------------------------------
 
 # #5: Post-Login Redirection
 
@@ -215,3 +223,62 @@ router.post(
 2. Not logged in → save URL in session
 3. Redirect to `/login`
 4. After login → redirect to saved URL 🎯
+
+# --------------------------------------------------------------------------------------------------
+
+# #6: Listing Owner
+
+**Feature we want:**  
+- Every listing should store **who created it (owner)**
+- And show it in UI
+
+## STEP 1: Add owner field in listingSchema;
+📁 `models/listing.js`
+```js
+owner: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User"
+}
+```
+This creates a **relationship with User**
+
+## STEP 2: Assign owner while creating listing ⭐ (MOST IMPORTANT)
+
+📁 `routes/listings.js`
+
+```js 
+// Create Route
+router.post(
+  "/",
+  validateListing, // middleware to check validation for schema
+  wrapAsync(async (req, res, next) => {
+    newListing.owner = req.user._id; // passport by default save user info in 'req.user'
+  }),
+);
+```
+This connects: **Listing -> User**
+
+## STEP 3: Populate owner in Show Route
+
+```js 
+// Show Route
+router.get(
+  "/:id",
+  wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(id)
+      .populate("reviews")
+      .populate("owner");
+  }),
+);
+```
+Converts:  
+`owner: id` → `owner: full user object`
+
+## STEP 4: Show owner in EJS
+
+```html
+<p class="card-text">
+  <strong>Owned By:</strong>
+  <i> <%= listing.owner.username %></i> 
+</p>
+```

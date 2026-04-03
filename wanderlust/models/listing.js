@@ -20,16 +20,20 @@ const listingSchema = new Schema({
   price: Number,
   location: String,
   country: String,
-  reviews: [
+  reviews: [ // add 'reviews' field in listingSchema
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
     },
   ],
+  owner: { // add 'owner' field in listingSchema
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 // this code: will automatically delete all reviews, if listing deleted. (cascade delete using mongoose middleware)
-// this is (post) mongoose middleware 
+// this is (post) mongoose middleware
 listingSchema.post("findOneAndDelete", async (listing) => {
   if (listing) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });
