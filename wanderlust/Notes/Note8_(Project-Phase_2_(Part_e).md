@@ -106,11 +106,13 @@ app.use((req, res, next) => {
 This **middleware** makes flash messages and the logged-in user available to all EJS templates using `res.locals`.
 
 # #4: Login after SignUp
-**Problem/Flaws:** we found flaws even after SignUp, we need to login then to create, edit something.
+**Problem/Flaws:**   
+we found flaws even after SignUp, we need to login then to create, edit something.
 
-**Solution:** as user SignUp(register) in website, they should automatically logged-in.
+**Solution:**   
+as user SignUp(register) in website, they should automatically logged-in.
 
-## 1.1. Sigma note:
+## 4.1. Sigma note:
 Passport's login method automatically established a login session.  
 We can invoke login to automatically login a user.
 
@@ -143,3 +145,73 @@ router.post(
 we need to use `req.login()` just after registered/save user data to server, so that it can login immediately just after signup/register.
 
 `req.login()` is a Passport method that logs in a user by storing their data in the session and setting `req.user`, making them authenticated immediately.
+
+# #5: Post-Login Redirection
+
+**Problem / Flaw:**  
+When an unauthenticated user tries to access a protected route like `/listings/new`, they are redirected to the login page. However, after successfully logging in, the user is redirected to `/listings` instead of the originally requested URL (`/listings/new`).
+
+**Solution:**  
+After successful login, the user should be redirected back to the original URL from which they were sent to the login page.
+
+## 5.1. Solution (Step-by-Step);
+
+### 5.1.1. Save original URL before redirecting to login
+Update your `isLoggedIn` middleware:
+
+`../middleware.js`
+```js
+// Defining middleware for `req.isAuthenticate()` means is user logged-in or not.
+
+const isLoggedIn = (req, res, next) => {
+  console.log(req.path, "..", req.originalUrl);
+  if (!req.isAuthenticated()) { // if 'user' is not logged-in
+    req.session.redirectUrl = req.originalUrl; // save URL, User tries: /listings/new  ....(save url only if user is not logged-in, it will save last page URL on which /login page redirects )
+  }
+  next(); // calling next() is compulsory.
+};
+
+module.exports = isLoggedIn;
+```
+
+### 5.1.2 Create middleware to pass it to res.locals
+
+`../middleware.js`
+```js
+// Middleware(login): This middleware takes the URL saved in session (before login) and makes it available after login so you can redirect the user back to the same page.
+module.exports.saveRedirectUrl = (req, res, next) => {
+  if(req.session.redirectUrl) {   // if req.session.redirectUrl exits
+    res.locals.redirectUrl = req.session.redirectUrl; // then save to 'req.locals', ... 'redirectUrl' variable
+  }
+  next();
+}
+```
+
+### 5.1.3. Use it after login
+In your login route:
+
+```js
+const { saveRedirectUrl } = require("../middleware.js");
+
+// Login POST route: // passport.authenticate() is middleware by passport
+router.post(
+  "/login",
+  saveRedirectUrl,
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  async (req, res) => {
+    req.flash("success", "Welcome to Wanderlust!");
+    let redirectUrl = res.locals.redirectUrl || "/listings"; // redirect to saved URL if exists, otherwise default to /listings
+    delete req.session.redirectUrl; // clearn after use
+    res.redirect(redirectUrl);
+  },
+);
+```
+### 5.1.4. Flow (Redirect to Original Page After Login)
+
+1. User tries `/listings/new`
+2. Not logged in → save URL in session
+3. Redirect to `/login`
+4. After login → redirect to saved URL 🎯
