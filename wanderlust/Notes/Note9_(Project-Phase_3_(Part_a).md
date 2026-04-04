@@ -161,6 +161,8 @@ router.post(
 
 # #4: Router.route()
 
+**Express `router.route(path)` docs:**[https://expressjs.com/en/5x/api.html#router.route](https://expressjs.com/en/5x/api.html#router.route)
+
 ## 4.1 What is router.route()?
 `router.route()` **lets you handle multiple HTTP methods for the same path in one place.**  
 
@@ -193,3 +195,43 @@ router
 ```
 And we can do `router.route()` for all listings, reviews and Users, if there **multiple routes** exists with **same path**, it makes our code more stuctured.
 
+# #5: Re-Styling Rating:
+adding feature star rating
+
+## 5.1 STEP 1. Use this library and add .css file:
+**Using this library:**[https://github.com/LunarLogic/starability/blob/master/starability-css/starability-slot.css](https://github.com/LunarLogic/starability/blob/master/starability-css/starability-slot.css)
+
+add this .css file in our `public/css/rating.css`.
+
+## 5.2 STEP 2. Link to .css file to  `layouts/biolerplate.ejs`
+`layouts/biolerplate.ejs`
+```html
+    <link rel="stylesheet" href="/css/style.css" />
+```
+
+## 5.3 STEP 3. How to use: (add this code to `show.ejs` file)
+`routes/show.ejs`
+```html
+              <div class="mb-3 mt-3">
+                <label for="rating" class="form-label">Rating:</label>
+                <fieldset class="starability-slot">
+                  <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                  <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                  <label for="first-rate1" title="Terrible">1 star</label>
+                  <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                  <label for="first-rate2" title="Not good">2 stars</label>
+                  <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                  <label for="first-rate3" title="Average">3 stars</label>
+                  <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                  <label for="first-rate4" title="Very good">4 stars</label>
+                  <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                  <label for="first-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+              </div>
+```
+
+## 5.4 STEP 4. Showing the static rating result: ( means how rating star look after review done)
+`routes/show.ejs`
+```html
+ <p class="starability-result" data-rating="<%= review.rating %>"></p>
+```
