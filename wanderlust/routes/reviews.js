@@ -1,22 +1,10 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true }); // Allows this router to access URL parameters (req.params) from its parent route (e.g., :id from app.use("/listings/:id/reviews", ...))
-
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { reviewSchema } = require("../schema.js"); //server-side validation (Joi) schema required
 const Review = require("../models/review.js"); // 'Review' model required
 const Listing = require("../models/listing.js"); // 'Listing' model required
-
-// Defined new Middleware for reviewSchema Validation (server-side)
-const validateReview = (req, res, next) => {
-  let { error } = reviewSchema.validate(req.body);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+const { validateReview } = require("../middleware.js");
 
 // REVIEWS - post route
 router.post(

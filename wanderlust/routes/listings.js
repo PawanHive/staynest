@@ -1,28 +1,8 @@
 const express = require("express");
 const router = express.Router(); //router object
-
 const wrapAsync = require("../utils/wrapAsync.js");
-const ExpressError = require("../utils/ExpressError.js");
-const { listingSchema } = require("../schema.js"); //server-side validation (Joi) schema required
 const Listing = require("../models/listing");
-
-const isLoggedIn = require("../middleware.js");
-
-// Defining new Middleware for listingSchema Validation (server-side)
-// Middleware to validate request data against the listingSchema using Joi.
-// If validation fails, it throws an ExpressError with status 400 and details of the error.
-// Otherwise, it calls next() to continue to the next middleware or route handler.
-const validateListing = (req, res, next) => {
-  let { error } = listingSchema.validate(req.body);
-  // console.log(error);
-  if (error) {
-    // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 // Index Route
 router.get(
@@ -75,6 +55,7 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
@@ -90,6 +71,7 @@ router.get(
 router.put(
   "/:id",
   isLoggedIn,
+  isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
@@ -103,6 +85,7 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);

@@ -88,7 +88,7 @@ router.get("/logout", (req, res, next) => {
 to SignUp , Login and Logout.
 
 `../views/includes/navbar.js`
-```
+```html
       <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
         <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>
           <a class="nav-link" href="/signup">Sign up</a>
@@ -326,3 +326,65 @@ currUser && listing.owner._id.equals(currUser._id)
 - AND user is owner ✅  
 
 👉 Only then show buttons
+
+# #8: Authorization for `/listings`
+
+**Feature we want:**  
+- **Listing Ownership Protection** - means **Only owners can modify their listings**.
+- meaning while others are **blocked** even if they try to access the route directly (using `postman` or `hoppscotch`)
+- Always **validate ownership on the backend**.
+
+## 8.1. STEP 1: Create isOwner middleware (REAL SECURITY)
+
+This middleware **checks if the current user is the owner of a listing and blocks access if they aren’t.**
+
+📁 `middleware.js`
+```js
+// 'isOwner' middleware checks if the current user is the owner of a listing and blocks access if they aren’t. (no one can request for edit/delete from postman or hoppscotch)
+module.exports.isOwner = async (req, res, next) => {
+  let { id } = req.params;
+  let listing = await Listing.findById(id);
+  if (!listing.owner._id.equals(res.locals.currUser._id)) {
+    req.flash("error", "You are not the owner of this listing!");
+    return res.redirect(`/listings/${id}`);
+  }
+  next();
+};
+```
+
+## 8.2. STEP 2: Use `isOwner` middleware in routes
+
+📁 `routes/listings.js`
+
+```js
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
+
+
+// Edit Route
+router.get(
+  "/:id/edit",
+  isLoggedIn,
+  isOwner,
+  wrapAsync(async (req, res) => {
+  }),
+);
+
+// Update Route
+router.put(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  validateListing,
+  wrapAsync(async (req, res) => {
+  }),
+);
+
+// Delete Route
+router.delete(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  wrapAsync(async (req, res) => {
+  }),
+);
+```
