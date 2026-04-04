@@ -32,7 +32,11 @@ It’s a design pattern used to organize your code properly so your app stays cl
 
 ---
 
-## 1.1 Example:
+# ----------------------------------------------------------------------------------------------------------------
+
+# #2: MVC for Listings
+
+ **Example:**  
 
 `controllers/listings.js`
 example of one route
@@ -64,3 +68,90 @@ router.put(
   wrapAsync(listingController.updateListing),
 );
 ```
+
+**Note:**  
+ This functionality is exactly same for **listing routes **and **review routes**
+
+# ----------------------------------------------------------------------------------------------------------------
+
+ # #3: MVC for Reviews & Users:
+
+ ## 3.1 MVC for Reviews:
+ **Examples:**  
+
+ `controller/reviews.js` 
+
+ ```js
+const Review = require("../models/review.js"); // 'Review' model required
+const Listing = require("../models/listing.js"); // 'Listing' model required
+
+// REVIEWS - post route (controller)
+module.exports.createReview = async (req, res) => {
+  console.log(req.params.id);
+  const { id } = req.params;
+  const listing = await Listing.findById(id); //  Find listing
+  const newReview = new Review(req.body.review); //  Create review
+  newReview.author = req.user._id; // Link review to logged-in user
+  // console.log(newReview)
+  listing.reviews.push(newReview); //  Link review to listing
+  await newReview.save(); //  Save review
+  await listing.save(); //  Save listing
+  req.flash("success", "New Review Created!");
+  res.redirect(`/listings/${id}`);
+};
+ ```
+
+ `routes/reviews.js` 
+ ```js
+const reviewController = require("../controllers/reviews.js");
+
+// REVIEWS - post route
+router.post(
+  "/",
+  validateReview,
+  isLoggedIn,
+  wrapAsync(reviewController.createReview),
+);
+ ```
+
+ ## 3.2 MVC for Users
+
+ **Example:**  
+
+ `controller/users.js` 
+ ```js
+const User = require("../models/user.js");
+
+// SignUp POST route (controller)
+module.exports.signup = async (req, res) => {
+  try {
+    let { username, email, password } = req.body;
+    const newUser = new User({ email, username });
+    const registeredUser = await User.register(newUser, password); // stored user info into data base.
+    // console.log(registeredUser);
+    req.login(registeredUser, (err) => {
+      // 'req.login()' make user login automatically just after signup(register).
+      if (err) {
+        return next(err); // rare (err), handle using express error handler.
+      }
+      req.flash("success", "Welcome to Wanderlust!");
+      res.redirect("/listings");
+    });
+  } catch (e) {
+    req.flash("error", e.message);
+    res.redirect("/signup");
+  }
+};
+ ```
+
+ `routes/users.js`
+ ```js
+const userController = require("../controllers/users.js")
+
+// SignUp POST route
+router.post(
+  "/signup",
+  wrapAsync(userController.signup),
+);
+ ```
+# ----------------------------------------------------------------------------------------------------------------
