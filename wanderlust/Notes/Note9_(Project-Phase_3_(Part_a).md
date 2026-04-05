@@ -195,6 +195,8 @@ router
 ```
 And we can do `router.route()` for all listings, reviews and Users, if there **multiple routes** exists with **same path**, it makes our code more stuctured.
 
+# ----------------------------------------------------------------------------------------------------------------
+
 # #5: Re-Styling Rating:
 adding feature star rating
 
@@ -235,3 +237,56 @@ add this .css file in our `public/css/rating.css`.
 ```html
  <p class="starability-result" data-rating="<%= review.rating %>"></p>
 ```
+
+# --------------------------------------------------------------------------------------------------------------
+
+# #6: Image Upload Feature
+
+## 6.1 Problems We Will Face While Developing Image Upload
+
+We want to build a feature where users can directly upload images from their device.  
+While implementing this, we will face the following challenges:
+
+### ❌ 6.1.1 Problem 1: Form can't send `files` (image/photo) to backend
+
+- The current form setup only sends **text/raw data**
+- It is **not capable of sending files**
+
+### ❌ 6.1.2 Problem 2: Size limit in MongoDB
+
+- MongoDB stores data in **BSON format**
+- BSON has a **size limit for documents**
+- So, storing images directly in MongoDB is **not feasible**
+
+## 6.2 Steps to Solve These Problems
+
+### ✅ 6.2.1 Step 1: Make form capable of sending files
+
+- Modify the form to support file uploads
+- We **cannot store files directly in MongoDB**
+- So, we will use a **3rd-party cloud service**
+
+> ⚠️ Note:
+> - Free cloud services are okay for learning
+> - For production, always use a **paid and reliable cloud provider**
+
+
+### ☁️ 6.2.2 Step 2: Upload files to cloud server
+
+- Send the uploaded file to a **3rd-party cloud service**
+- The cloud service will handle file storage
+
+### 🔗 6.2.3 Step 3: Cloud server returns file URL
+
+- After upload, the cloud service returns:
+  - A **URL / link** of the uploaded image
+
+### 💾 6.2.4 Step 4: Store URL in MongoDB
+
+- Save the **image URL** (not the file) in MongoDB
+- This keeps the database **lightweight and efficient**
+
+---
+
+# --------------------------------------------------------------------------------------------------------------
+
