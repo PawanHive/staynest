@@ -5,7 +5,13 @@
     <%# here means form will take only 8colums(col-8) outof 12 and shift 2
     column from left (offset-2) %>
     <h3>Create a New Listing:</h3>
-    <form method="POST" action="/listings" class="needs-validation" novalidate>
+    <form
+      method="POST"
+      action="/listings"
+      class="needs-validation"
+      novalidate
+      enctype="multipart/form-data" <%# "multipart/from-data" can parse files to backend %>
+    >
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input
@@ -18,6 +24,7 @@
         />
         <div class="valid-feedback">Looks Good!</div>
       </div>
+
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <textarea
@@ -30,12 +37,12 @@
         ></textarea>
         <div class="invalid-feedback">Please enter a short description</div>
       </div>
+
       <div class="mb-3">
-        <label for="image" class="form-label">Image</label>
+        <label for="image" class="form-label">Upload Listing Image</label>
         <input
-          type="text"
+          type="file"
           class="form-control"
-          placeholder="enter image URL/Link"
           name="listing[image]"
           id="image"
         />
@@ -54,6 +61,7 @@
           />
           <div class="invalid-feedback">Price should be valid</div>
         </div>
+
         <div class="mb-3 col-md-8">
           <%# means after medium screen size this row will span to column 8 %>
           <label for="country" class="form-label">Country</label>
@@ -67,6 +75,7 @@
           />
           <div class="invalid-feedback">Country should be valid</div>
         </div>
+
       </div>
 
       <div class="mb-3">

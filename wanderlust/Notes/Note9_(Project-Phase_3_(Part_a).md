@@ -1,6 +1,7 @@
 # Important Links:
 **Express `router.route(path)` docs:**[https://expressjs.com/en/5x/api.html#router.route](https://expressjs.com/en/5x/api.html#router.route)
 
+**Multer npm package:**[https://www.npmjs.com/package/multer](https://www.npmjs.com/package/multer)
 # MVC (Model View Controller)
 
 ## What is MVC?
@@ -286,7 +287,67 @@ While implementing this, we will face the following challenges:
 - Save the **image URL** (not the file) in MongoDB
 - This keeps the database **lightweight and efficient**
 
+## Flow:
+```mermaid
+flowchart LR
+    A[User Uploads Image] --> B[Frontend Form]
+    B --> C[Backend Server]
+    C --> D[Cloud Storage Service]
+    D --> E[Returns Image URL]
+    E --> F[Save URL in MongoDB]
+    F --> G[Display Image Using URL]
+```
 ---
 
 # --------------------------------------------------------------------------------------------------------------
 
+# #7: Manipulating Form
+
+For now we are using `app.use(express.urlencoded({ extended: true }));` this line to parse our form which parse only data (econded data) not files
+
+but Now we have to use `enctype="multipart/form-data"` line of code in our form which makes our form capable to sending files also do database server.
+
+And to parse **multipart** - `enctype="multipart/form-data"` we use [Multer](https://www.npmjs.com/package/multer) npm package. Download it using `npm i multer` because express can't understand **multipart**
+
+`views/listings/new.ejs`
+```html
+    <form
+      method="POST"
+      action="/listings"
+      class="needs-validation"
+      novalidate
+      enctype="multipart/form-data" <%# "multipart/from-data" can parse files to backend %>
+    >
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Listing Image</label>
+        <input
+          type="file"
+          class="form-control"
+          name="listing[image]"
+          id="image"
+        />
+      </div>
+
+    </form>
+```
+
+`routes/listings.js`
+```js
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' }) // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
+
+
+// Combines all same path ("/") of multiple routes at one place
+router
+  .route("/")
+  .get(wrapAsync(listingController.index)) // Index Route
+  // .post(
+  //   isLoggedIn,
+  //   validateListing, // middleware to check validation for schema
+  //   wrapAsync(listingController.createListing) // Create Route
+  // );
+  .post(upload.single('listing[image]'), (req, res) => {   // "upload.single('listing[image]')" this is middleware
+    res.send(req.file)
+  })
+```

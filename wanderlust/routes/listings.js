@@ -5,17 +5,23 @@ const router = express.Router(); //router object
 const wrapAsync = require("../utils/wrapAsync.js");
 const Listing = require("../models/listing");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
-
 const listingController = require("../controllers/listings.js");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' }) // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
+
 
 // Combines all same path ("/") of multiple routes at one place
 router
   .route("/")
   .get(wrapAsync(listingController.index)) // Index Route
-  .post(
-    validateListing, // middleware to check validation for schema
-    wrapAsync(listingController.createListing), // Create Route
-  );
+  // .post(
+  //   isLoggedIn,
+  //   validateListing, // middleware to check validation for schema
+  //   wrapAsync(listingController.createListing) // Create Route
+  // );
+  .post(upload.single('listing[image]'), (req, res) => {
+    res.send(req.file)
+  })
 
 // New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);
