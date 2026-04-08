@@ -36,6 +36,10 @@ const listingSchema = new Schema({
       type: [Number],
     },
   },
+  // category: {
+  //   type: String,
+  //   enum: ["mountains", "arctic", "farms", "deserts", ]
+  // }
 });
 
 // this code: will automatically delete all reviews, if listing deleted. (cascade delete using mongoose middleware)

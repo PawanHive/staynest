@@ -59,10 +59,10 @@ const sessionOptions = {
   },
 };
 
-// Root Route
-app.get("/", (req, res) => {
-  res.send("Hi, I am root");
-});
+// // Root Route
+// app.get("/", (req, res) => {
+//   res.send("Hi, I am root");
+// });
 
 app.use(session(sessionOptions)); // express-session middleware
 app.use(flash()); // connect-flash middleware declared
