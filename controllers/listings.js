@@ -21,6 +21,28 @@ module.exports.createListing = async (req, res, next) => {
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id; // (Link listing to logged-in user), passport by default save user info in 'req.user'
   newListing.image = { url, filename };
+
+    try {
+    const geoResult = await maptilerClient.geocoding.forward(
+      newListing.location,
+      { limit: 1 },
+    );
+
+    if (geoResult?.features?.length) {
+      newListing.geometry = geoResult.features[0].geometry;
+    } else {
+      throw new Error(
+        "Geocoding failed: No results found for the provided location."
+      );
+    }
+  } catch(err) {
+    console.error("Geocoding error:", err);
+    throw new ExpressError(
+      400,
+      "Geocoding failed: Unable to retrieve coordinates for the provided location.",
+    );
+  }
+
   await newListing.save();
   req.flash("success", "New Listing Created!"); // this message will flash after creating new listing but to access this message we will use res.locals()
   res.redirect("/listings");

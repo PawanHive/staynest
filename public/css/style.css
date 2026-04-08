@@ -106,3 +106,25 @@ body {
 .show-img {
   height: 30vh;
 }
+
+/* MAP */
+
+#map {
+  height: 400px;
+  width: 100%;
+  border-radius: 1rem;
+}
+
+@media (max-width: 767px) {
+  .show-img {
+    height: 35vh;
+  }
+
+  #map {
+    height: 300px;
+  }
+
+  .container {
+    width: min(1200px, 98vw);
+  }
+}

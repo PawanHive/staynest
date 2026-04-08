@@ -9,21 +9,32 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    url: "String", 
-    filename: "String"
+    url: "String",
+    filename: "String",
   },
   price: Number,
   location: String,
   country: String,
-  reviews: [ // add 'reviews' field in listingSchema
+  reviews: [
+    // add 'reviews' field in listingSchema
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
     },
   ],
-  owner: { // add 'owner' field in listingSchema
+  owner: {
+    // add 'owner' field in listingSchema
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  geometry: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+    },
+    coordinates: {
+      type: [Number],
+    },
   },
 });
 
