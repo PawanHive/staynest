@@ -7,7 +7,7 @@
 /* Horizontal scroll */
 #filters {
   gap: 0.1rem;
-  padding: 0rem 3.5rem; /* extra space so arrows don't cover filters */
+  padding: 0.5rem 3.5rem; /* extra space so arrows don't cover filters */
   scroll-behavior: smooth;
 }
 
@@ -21,23 +21,28 @@
   min-width: 100px;
   text-align: center;
   padding: 10px;
-  border-radius: 12px;
-  background-color: #ffeaea; /* light red */
+  border-radius: 32px;
+  background-color: #fff;
   border: 1px solid transparent;
   text-decoration: none;
-  color: black;
-  transition: 0.2s;
+  color: #222;
+  /* opacity: 0.7; */
+  /* transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.2s ease, opacity 0.2s ease; */
 }
 
 /* Hover */
 .filter:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+  opacity: 1;
 }
 
 /* Active filter */
 .filter.active {
-  border: 2px solid red;
-  background-color: #ffd6d6;
+  border: 1px solid #fe424d;
+  background-color: #f7e8e8;
+  color: #fe424d;
+  opacity: 1;
 }
 
 /* Arrows */
@@ -66,11 +71,6 @@
   right: 0.5rem;
 }
 
-.filter.active {
-  border: 2px solid red;
-  background-color: #ffd6d6;
-}
-
 /* imported from index.ejs */
 
 #filters {
@@ -83,18 +83,21 @@
   text-align: center;
   margin-right: 1rem;
   margin-top: 0;
-  opacity: 0.7;
-  color: black;
-  border: 1px solid transparent;
 }
 
 .filter:hover {
-  opacity: 1;
   cursor: pointer;
+}
+
+.filter i,
+.filter p {
+  color: inherit;
+  /* transition: color 0.2s ease; */
 }
 
 .filter p {
   font-size: 0.8rem;
+  margin-bottom: 0;
 }
 
 .tax-info {
