@@ -70,6 +70,14 @@ body {
   height: 100%;
 }
 
+.listing-card-shell {
+  position: relative;
+}
+
+.listing-media-wrapper {
+  position: relative;
+}
+
 .card-img-top {
   width: 100% !important;
   border-radius: 1rem !important;
@@ -86,6 +94,8 @@ body {
 
 .listing-links {
   text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 /* Card(overlay) Effect */
@@ -144,6 +154,80 @@ body {
   font-size: 1rem;
 }
 
+.results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.favorites-link,
+.favorites-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #fe424d;
+  font-weight: 600;
+}
+
+.favorites-link:hover,
+.favorites-back-link:hover {
+  color: #b6253d;
+}
+
+.favorite-form {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 3;
+}
+
+.favorite-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #6c757d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(34, 34, 34, 0.12);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.06);
+  color: #fe424d;
+}
+
+.favorite-btn.active {
+  color: #fe424d;
+}
+
+.favorite-login-link {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 3;
+}
+
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.favorites-title {
+  margin-bottom: 0.35rem;
+}
+
 /* index page title*/
 .index-title {
   font-weight: 400;
@@ -171,7 +255,7 @@ body {
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   background-color: #fff1f2;
-  color: #d6334c;
+  color: #fe424d;
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
@@ -182,5 +266,10 @@ body {
 @media (max-width: 575px) {
   .index-price-row {
     flex-wrap: wrap;
+  }
+
+  .favorite-btn {
+    width: 2.25rem;
+    height: 2.25rem;
   }
 }

@@ -134,45 +134,19 @@
 </div>
 
 
-<%# list counter %>
-<p class="mb-3 results-count">Over, <%= count %> places to stay</p>
+<div class="results-bar">
+  <p class="mb-3 results-count">Over, <%= count %> places to stay</p>
+
+  <% if (currUser) { %>
+    <a href="/favorites" class="favorites-link">
+      <i class="fa-solid fa-heart"></i>
+      Your Favorites
+    </a>
+  <% } %>
+</div>
 
         <%# show all listings to index page %>
-        <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 mt-3">
-          <% for (const listing of AllListings) { %>
-            <a href="/listings/<%= listing._id %>" class="listing-links">
-              <div class="card listing-card">
-                <img src="<%= listing.image.url %>" class="card-img-top" style="height: 15rem;" alt="listing_image">
-                <div class="card-img-overlay"></div>
-                <div class="card-body">
-                  <p class="card-text ">
-                    <span class="index-title">
-                      <small><b><%= listing.title %></b></small> 
-                    </span>
-                    <br>
-                    <span class="index-address">
-                      <small><%= listing.location %>, <%= listing.country %></small>
-                    </span>
-                    <br>
-                    <span class="index-price-row">
-                      <span class="index-price">
-                        <small>
-                        &#8377 <%= listing.price.toLocaleString("en-IN") %> / night
-                        <i class="tax-info">  &nbsp; &nbsp; +18% GST </i>
-                        </small>
-                      </span>
-                      <% if (listing.category) { %>
-                        <span class="listing-category-badge">
-                          <%= listing.category.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") %>
-                        </span>
-                      <% } %>
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </a>
-            <% } %>
-        </div>
+        <%- include("cards.ejs") %>
 
         <%# if listings not match to Search %> 
         <% if (AllListings.length == 0) { %>

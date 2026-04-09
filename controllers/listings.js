@@ -1,4 +1,5 @@
 const Listing = require("../models/listing");
+const User = require("../models/user");
 const ExpressError = require("../utils/ExpressError");
 
 
@@ -57,8 +58,17 @@ module.exports.index = async (req, res) => {
 
   const AllListings = await Listing.find(filter);
   const count = AllListings.length;
+  const favoriteIds = new Set(
+    (req.user?.favorites || []).map((id) => id.toString()),
+  );
   // console.log(AllListings);
-  res.render("listings/index.ejs", { AllListings, count, selectedCategory: category });
+  res.render("listings/index.ejs", {
+    AllListings,
+    count,
+    currentPath: req.originalUrl,
+    favoriteIds,
+    selectedCategory: category,
+  });
 };
 
 // New Route - controller
@@ -160,4 +170,31 @@ module.exports.destroyListing = async (req, res) => {
   console.log(deletedListing);
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
+};
+
+module.exports.toggleFavorite = async (req, res) => {
+  const { id } = req.params;
+  const { redirectUrl } = req.body;
+
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash("error", "Listing you requested for does not exist");
+    return res.redirect("/listings");
+  }
+
+  const user = await User.findById(req.user._id);
+  const alreadyFavorite = user.favorites.some((favoriteId) =>
+    favoriteId.equals(id),
+  );
+
+  if (alreadyFavorite) {
+    user.favorites.pull(id);
+    req.flash("success", "Listing removed from favorites");
+  } else {
+    user.favorites.push(id);
+    req.flash("success", "Listing added to favorites");
+  }
+
+  await user.save();
+  res.redirect(redirectUrl || "/listings");
 };

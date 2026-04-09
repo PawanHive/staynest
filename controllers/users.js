@@ -49,3 +49,17 @@ module.exports.logout = (req, res, next) => {
     res.redirect("/listings");
   });
 };
+
+module.exports.renderFavorites = async (req, res) => {
+  const user = await User.findById(req.user._id).populate("favorites");
+  const AllListings = user.favorites;
+  const count = AllListings.length;
+  const favoriteIds = new Set(AllListings.map((listing) => listing._id.toString()));
+
+  res.render("users/favorites.ejs", {
+    AllListings,
+    count,
+    currentPath: req.originalUrl,
+    favoriteIds,
+  });
+};

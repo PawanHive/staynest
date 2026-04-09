@@ -1,0 +1,21 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+<div class="favorites-header">
+  <div>
+    <h3 class="favorites-title">Your Favorite Listings</h3>
+    <p class="results-count mb-0"><%= count %> saved place<%= count === 1 ? "" : "s" %></p>
+  </div>
+  <a href="/listings" class="favorites-back-link">Browse all listings</a>
+</div>
+
+<% if (AllListings.length) { %>
+  <%- include("../listings/cards.ejs") %>
+<% } else { %>
+  <div class="d-flex justify-content-center mt-5 align-items-center">
+    <div class="text-center">
+      <h4 class="text-muted">No favorites yet!</h4>
+      <p class="text-secondary">Tap the heart on any listing to save it here.</p>
+      <a href="/listings" class="btn add-button text-white">Explore listings</a>
+    </div>
+  </div>
+<% } %>

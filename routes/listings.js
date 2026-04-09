@@ -26,6 +26,12 @@ router
 // New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
+router.post(
+  "/:id/favorite",
+  isLoggedIn,
+  wrapAsync(listingController.toggleFavorite),
+);
+
 // Combines all same path ("/:id") of multiple routes at one place
 router
   .route("/:id")
