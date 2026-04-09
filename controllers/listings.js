@@ -50,15 +50,15 @@ module.exports.index = async (req, res) => {
         { country: { $regex: search, $options: "i" } },  // for country search
       ];
     };
-
     // Category filter
     if (category) {
       filter.category = category;
     }
 
   const AllListings = await Listing.find(filter);
+  const count = AllListings.length;
   // console.log(AllListings);
-  res.render("listings/index.ejs", { AllListings, selectedCategory: category });
+  res.render("listings/index.ejs", { AllListings, count, selectedCategory: category });
 };
 
 // New Route - controller

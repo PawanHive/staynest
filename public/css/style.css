@@ -135,3 +135,25 @@ body {
   }
 }
 
+/* listing counter */
+.results-count {
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* index page title*/
+.index-title {
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+/* index page address */
+.index-address {
+  font-size: 0.8rem;
+}
+
+.index-price {
+  font-size: 1rem;
+}
