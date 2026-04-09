@@ -1,4 +1,4 @@
-
+<%# search CSS %>
 <style>
   .search-btn {
     background-color: #fe424d;
@@ -33,17 +33,21 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+      <%# StayNest title %>
       <div class="navbar-nav">
         <a class="nav-link" href="/listings"><strong>Explore</strong></a>
       </div>
 
+      <%# search bar  %> 
       <div class="navbar-nav ms-auto">
-        <form class="d-flex">
-          <input class="form-control me-2 search-input" type="search" placeholder="Search Destinations">
+        <form class="d-flex" action="/listings" method="GET">
+          <input class="form-control me-2 search-input" type="text" name="search" placeholder="Search Destinations">
           <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
         </form>
       </div>
 
+      <%# signup login & logout %>
       <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
         <a class="nav-link" href="/listings/new"><strong>Become a host</strong></a>
         <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>

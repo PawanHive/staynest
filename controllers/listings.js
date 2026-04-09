@@ -2,8 +2,22 @@ const Listing = require("../models/listing");
 
 // Index Route - controller
 module.exports.index = async (req, res) => {
-  const AllListings = await Listing.find({});
-  // console.log(AllListings)
+  const { search } = req.query;
+  // console.log(search);
+  let AllListings;
+
+  if (search) {
+    AllListings = await Listing.find({
+      $or: [
+        { title: { $regex: search, $options: "i" } },  // for title search: `$regex` → allows partial match, $options: "i" → case insensitive (Delhi = delhi)
+        { location: { $regex: search, $options: "i" } },  // for location search
+        { country: { $regex: search, $options: "i" } },  // for country search
+      ]
+    });
+  } else {
+    AllListings = await Listing.find({});
+  }
+  // console.log(AllListings);
   res.render("listings/index.ejs", { AllListings });
 };
 

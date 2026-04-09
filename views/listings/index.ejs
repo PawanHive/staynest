@@ -1,5 +1,6 @@
 <% layout("/layouts/boilerplate.ejs") %>
 
+<%# css for filters & tax switch %> 
 <style>
   #filters {
     display: flex;
@@ -39,6 +40,7 @@
   }
 </style>
 
+        <%# category filter %>
         <div id="filters">
 
           <div class="filter">
@@ -125,6 +127,7 @@
             <p>Islands</p>
           </div>
 
+        <%# tax toggle switch  %>
           <div class="tax-toggle">
             <div class="form-check-reverse form-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
@@ -134,6 +137,7 @@
 
         </div>
 
+        <%# show all listings to index page %>
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
           <% for (const listing of AllListings) { %>
             <a href="/listings/<%= listing._id %>" class="listing-links">
@@ -155,6 +159,17 @@
             <% } %>
         </div>
 
+        <%# if listings not match to Search %> 
+        <% if (AllListings.length == 0) { %>
+          <div class="d-flex justify-content-center mt-5 align-items-center" >
+                <div class="text-center">
+                  <h4 class="text-muted">No listings found!</h4>
+                  <p class="text-secondary">Try searching for a different location</p>
+                </div>
+          </div>
+        <% } %>
+
+<%# tax toggle switch backend %>
 <script>
   let taxSwitch = document.getElementById("flexSwitchCheckDefault");
   taxSwitch.addEventListener("click", () => {
