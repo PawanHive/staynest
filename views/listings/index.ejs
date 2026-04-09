@@ -154,11 +154,18 @@
                       <small><%= listing.location %>, <%= listing.country %></small>
                     </span>
                     <br>
-                    <span class="index-price">
-                      <small>
-                      &#8377 <%= listing.price.toLocaleString("en-IN") %> / night
-                      <i class="tax-info">  &nbsp; &nbsp; +18% GST </i>
-                      </small>
+                    <span class="index-price-row">
+                      <span class="index-price">
+                        <small>
+                        &#8377 <%= listing.price.toLocaleString("en-IN") %> / night
+                        <i class="tax-info">  &nbsp; &nbsp; +18% GST </i>
+                        </small>
+                      </span>
+                      <% if (listing.category) { %>
+                        <span class="listing-category-badge">
+                          <%= listing.category.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") %>
+                        </span>
+                      <% } %>
                     </span>
                   </p>
                 </div>
