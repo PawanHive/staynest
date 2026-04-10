@@ -2,7 +2,7 @@
 
   <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
     <div class="container-fluid">
-      <!-- <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a> -->
+      
 
       <%# StayNest title & icons %>
       <a class="navbar-brand d-flex align-items-center" href="/listings">
@@ -10,16 +10,20 @@
         <span class="navbar-title">StayNest</span>
       </a>
 
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <%# search bar %>
-            <div class="navbar-nav ms-auto">
-              <form class="d-flex" action="/listings" method="GET">
-                <input class="form-control me-2 search-input" type="text" name="search"
-                  placeholder="Search Destinations">
-                <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
-              </form>
-            </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <%# search bar %>
+        <div class="navbar-nav ms-auto">
+          <form class="d-flex" action="/listings" method="GET">
+            <input class="form-control me-2 search-input" type="text" name="search"
+            placeholder="Search Destinations">
+            <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+          </form>
+        </div>
+        
             <%# signup login & logout %>
               <div class="navbar-nav ms-auto">
                 <%# 'ms-auto' means margin from start, shift this options to right side%>

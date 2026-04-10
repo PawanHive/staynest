@@ -1,8 +1,8 @@
-<div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 mt-3">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 mt-3">
   <% for (const listing of AllListings) { %>
     <% const isFavorite = favoriteIds.has(listing._id.toString()); %>
     <div class="col">
-      <div class="card listing-card listing-card-shell">
+      <div class="card listing-card listing-card-shell col d-flex h-100">
         <div class="listing-media-wrapper">
           <% if (currUser) { %>
             <form
