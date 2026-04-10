@@ -67,5 +67,8 @@
     margin-top: 0 !important;
     flex-direction: row !important;
     align-items: center !important;
+    position: static !important;
+    width: auto !important;
+    min-width: unset !important;
   }
 }
