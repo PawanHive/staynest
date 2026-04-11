@@ -11,6 +11,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -26,7 +27,8 @@ app.use(cors()); // 2. Enable it for all routes
 
 let port = 8080;
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL;
 
 main()
   .then(() => {
@@ -37,7 +39,7 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
 app.set("view engine", "ejs");
@@ -47,8 +49,22 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+// configuration for session-store (for production phase)
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: "MySuperSecretKey",
+  },
+  touchAfter: 24 * 60 * 60,
+})
+
+store.on("error", (err) => {
+  console.log("ERROR in MONGO SESSION STORE", err);
+})
+
 // configuration for session Options
 const sessionOptions = {
+  store,
   secret: "MySuperSecretKey",
   resave: false,
   saveUninitialized: true,
@@ -63,6 +79,8 @@ const sessionOptions = {
 // app.get("/", (req, res) => {
 //   res.send("Hi, I am root");
 // });
+
+
 
 app.use(session(sessionOptions)); // express-session middleware
 app.use(flash()); // connect-flash middleware declared
