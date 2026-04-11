@@ -19,7 +19,7 @@
   border: 1px solid #ccc;
 }
 
-/* Popup dropdown style — small screens only */
+/* Popup dropdown style  small screens only */
 @media (max-width: 991.98px) {
   .popup-menu {
     padding-left: 0.75rem !important;
@@ -32,9 +32,26 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     flex-direction: column !important;  
     align-items: flex-start !important; 
-    /* background-color: red !important; */
+    background-color: white !important;
   }
 }
+
+@media (min-width: 992px) {
+  .navbar-brand {
+    flex: 1;
+  }
+
+  .navbar-collapse {
+    flex: 1;
+  }
+
+  .search-form {
+    flex: 0 0 auto;
+    width: 400px;
+    margin: 0 auto;
+  }
+}
+
 
 @media (max-width: 991.98px) {
   .navbar-title {
