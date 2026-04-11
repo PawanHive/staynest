@@ -11,7 +11,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
+const { MongoStore } = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -56,11 +56,11 @@ const store = MongoStore.create({
     secret: "MySuperSecretKey",
   },
   touchAfter: 24 * 60 * 60,
-})
+});
 
 store.on("error", (err) => {
   console.log("ERROR in MONGO SESSION STORE", err);
-})
+});
 
 // configuration for session Options
 const sessionOptions = {
@@ -79,8 +79,6 @@ const sessionOptions = {
 // app.get("/", (req, res) => {
 //   res.send("Hi, I am root");
 // });
-
-
 
 app.use(session(sessionOptions)); // express-session middleware
 app.use(flash()); // connect-flash middleware declared

@@ -6,11 +6,10 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const Listing = require("../models/listing");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
-const multer  = require('multer')
+const multer = require("multer");
 
-const { storage } = require("../cloudConfig.js")
-const upload = multer({ storage }) // now data will store in claudinary storage   // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
-
+const { storage } = require("../cloudConfig.js");
+const upload = multer({ storage }); // now data will store in claudinary storage   // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
 
 // Combines all same path ("/") of multiple routes at one place
 router
@@ -18,9 +17,9 @@ router
   .get(wrapAsync(listingController.index)) // Index Route
   .post(
     isLoggedIn,
+    upload.single("listing[image]"), // multer middleware (must run BEFORE validation)
     validateListing, // middleware to check validation for schema
-    upload.single('listing[image]'), // multer middleware
-    wrapAsync(listingController.createListing) // Create Route
+    wrapAsync(listingController.createListing), // Create Route
   );
 
 // New Route
@@ -39,7 +38,7 @@ router
   .put(
     isLoggedIn,
     isOwner,
-    upload.single('listing[image]'), // multer middleware
+    upload.single("listing[image]"), // multer middleware
     validateListing,
     wrapAsync(listingController.updateListing), // Update Route
   )
